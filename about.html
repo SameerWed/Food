@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>About — GRUB</title>
+<link rel="stylesheet" href="style.css">
+<style>
+.about-hero {
+  padding: calc(var(--nav-h) + 64px) 48px 56px;
+  max-width: 1180px; margin: 0 auto;
+  display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center;
+}
+.about-tag {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: rgba(255,69,0,0.1); border: 1px solid rgba(255,69,0,0.3);
+  border-radius: 999px; padding: 6px 16px;
+  font-family: var(--font-head); font-size: 11px; font-weight: 700;
+  color: var(--accent); letter-spacing: 1.5px; text-transform: uppercase;
+  margin-bottom: 20px;
+  animation: fadeUp 0.5s ease 0.1s both;
+}
+.about-title {
+  font-family: var(--font-head); font-size: clamp(42px,5.5vw,72px);
+  font-weight: 800; letter-spacing: -2.5px; line-height: 0.94;
+  margin-bottom: 24px;
+  animation: fadeUp 0.5s ease 0.2s both;
+}
+.about-title .accent { color: var(--accent); }
+.about-desc {
+  color: var(--muted2); font-size: 16px; line-height: 1.7; margin-bottom: 36px;
+  animation: fadeUp 0.5s ease 0.3s both;
+}
+.about-stats { display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; animation: fadeUp 0.5s ease 0.4s both; }
+.about-stat {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 20px;
+  text-align: center; transition: all var(--transition);
+}
+.about-stat:hover { border-color: rgba(255,69,0,0.35); }
+.about-stat-num { font-family: var(--font-head); font-size: 28px; font-weight: 800; color: var(--accent); }
+.about-stat-label { font-size: 12px; color: var(--muted2); margin-top: 4px; }
+
+.about-visual { animation: scaleIn 0.5s ease 0.2s both; }
+.big-emoji-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 24px; padding: 48px; text-align: center; position: relative; overflow: hidden;
+}
+.big-emoji-card::before {
+  content:''; position:absolute; top:-30%;right:-20%;
+  width:300px;height:300px; border-radius:50%;
+  background: radial-gradient(circle, rgba(255,69,0,0.14) 0%, transparent 65%);
+}
+.big-emoji { font-size: 120px; display: block; line-height: 1; margin-bottom: 20px; }
+.big-emoji-title { font-family: var(--font-head); font-size: 22px; font-weight: 800; }
+.big-emoji-sub { color: var(--muted2); font-size: 14px; margin-top: 6px; }
+
+/* Mission */
+.mission-band {
+  background: var(--surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+  padding: 72px 48px;
+}
+.mission-inner { max-width: 1180px; margin: 0 auto; display: grid; grid-template-columns: 1fr 2fr; gap: 60px; align-items: center; }
+.mission-label { font-family: var(--font-head); font-size: 11px; font-weight: 700; color: var(--accent); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 12px; }
+.mission-title { font-family: var(--font-head); font-size: 36px; font-weight: 800; letter-spacing: -1.5px; }
+.mission-quote {
+  font-size: 22px; line-height: 1.5; font-style: italic; color: var(--muted2);
+  border-left: 3px solid var(--accent); padding-left: 24px;
+}
+.mission-quote strong { color: var(--text); font-style: normal; }
+
+/* Values */
+.values-section { padding: 72px 48px; max-width: 1180px; margin: 0 auto; }
+.section-title { font-family: var(--font-head); font-size: 36px; font-weight: 800; letter-spacing: -1px; margin-bottom: 36px; }
+.values-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 20px; }
+.value-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 32px;
+  transition: all var(--transition);
+}
+.value-card:hover { border-color: rgba(255,69,0,0.35); transform: translateY(-5px); box-shadow: 0 16px 40px rgba(0,0,0,0.3); }
+.value-emoji { font-size: 44px; margin-bottom: 18px; }
+.value-title { font-family: var(--font-head); font-size: 18px; font-weight: 800; margin-bottom: 10px; }
+.value-desc { color: var(--muted2); font-size: 14px; line-height: 1.65; }
+
+/* Team */
+.team-section { padding: 0 48px 72px; max-width: 1180px; margin: 0 auto; }
+.team-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 20px; }
+.team-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 28px 20px; text-align: center;
+  transition: all var(--transition);
+}
+.team-card:hover { border-color: rgba(255,69,0,0.3); transform: translateY(-4px); }
+.team-avatar {
+  width: 72px; height: 72px; border-radius: 50%;
+  background: rgba(255,69,0,0.1); border: 2px solid rgba(255,69,0,0.25);
+  margin: 0 auto 16px; display: flex; align-items: center; justify-content: center;
+  font-size: 36px;
+}
+.team-name { font-family: var(--font-head); font-size: 16px; font-weight: 800; margin-bottom: 4px; }
+.team-role { font-size: 12px; color: var(--muted2); }
+
+/* Timeline */
+.timeline-section { background: var(--surface); border-top: 1px solid var(--border); padding: 72px 48px; }
+.timeline-inner { max-width: 1180px; margin: 0 auto; }
+.timeline { display: flex; flex-direction: column; gap: 0; position: relative; padding-left: 32px; }
+.timeline::before { content:''; position:absolute; left:8px; top:0; bottom:0; width:2px; background: var(--border); }
+.tl-item { position: relative; padding: 0 0 40px 28px; }
+.tl-dot {
+  position: absolute; left: -24px; top: 4px;
+  width: 18px; height: 18px; border-radius: 50%;
+  background: var(--accent); border: 3px solid var(--bg);
+  box-shadow: 0 0 0 3px rgba(255,69,0,0.25);
+}
+.tl-year { font-family: var(--font-head); font-size: 12px; font-weight: 700; color: var(--accent); margin-bottom: 6px; letter-spacing: 1px; }
+.tl-event { font-family: var(--font-head); font-size: 18px; font-weight: 700; margin-bottom: 6px; }
+.tl-desc { font-size: 14px; color: var(--muted2); line-height: 1.6; }
+
+@media(max-width:900px){
+  .about-hero { grid-template-columns:1fr; padding: calc(var(--nav-h)+30px) 20px 40px; }
+  .about-visual { display: none; }
+  .mission-inner { grid-template-columns:1fr; }
+  .values-grid,.team-grid { grid-template-columns:1fr 1fr; }
+  .values-section,.team-section,.timeline-section { padding: 48px 20px; }
+  .mission-band { padding: 48px 20px; }
+}
+</style>
+</head>
+<body>
+<div class="page-enter">
+<main>
+
+<!-- HERO -->
+<section class="about-hero">
+  <div>
+    <div class="about-tag">🍽️ Our Story</div>
+    <h1 class="about-title">Food that<br>brings people<br><span class="accent">together.</span></h1>
+    <p class="about-desc">GRUB was born in a tiny apartment kitchen in 2021. We were tired of cold food and broken promises. So we built the delivery platform we always wanted — fast, reliable, and always delicious.</p>
+    <div class="about-stats">
+      <div class="about-stat"><div class="about-stat-num">50K+</div><div class="about-stat-label">Happy Customers</div></div>
+      <div class="about-stat"><div class="about-stat-num">200+</div><div class="about-stat-label">Restaurant Partners</div></div>
+      <div class="about-stat"><div class="about-stat-num">28 min</div><div class="about-stat-label">Avg Delivery</div></div>
+    </div>
+  </div>
+  <div class="about-visual">
+    <div class="big-emoji-card">
+      <span class="big-emoji">🍽️</span>
+      <div class="big-emoji-title">Made with passion</div>
+      <div class="big-emoji-sub">Every meal, every time</div>
+    </div>
+  </div>
+</section>
+
+<!-- MISSION -->
+<section class="mission-band">
+  <div class="mission-inner">
+    <div>
+      <div class="mission-label">Our Mission</div>
+      <div class="mission-title">Why We Exist</div>
+    </div>
+    <blockquote class="mission-quote">
+      We believe great food shouldn't be a luxury. <strong>Every person deserves restaurant-quality meals at their door</strong> — hot, fast, and affordable. That's not just a mission. That's a promise.
+    </blockquote>
+  </div>
+</section>
+
+<!-- VALUES -->
+<section class="values-section">
+  <div class="section-title">What We Stand For</div>
+  <div class="values-grid">
+    <div class="value-card"><div class="value-emoji">⚡</div><div class="value-title">Speed First</div><div class="value-desc">Every second counts. We obsess over logistics so your food arrives hot every single time — no excuses.</div></div>
+    <div class="value-card"><div class="value-emoji">🤝</div><div class="value-title">Partner Respect</div><div class="value-desc">We treat restaurants and riders as partners, not vendors. Fair commissions, fair pay, fair play.</div></div>
+    <div class="value-card"><div class="value-emoji">🌱</div><div class="value-title">Sustainability</div><div class="value-desc">Eco-friendly packaging, EV riders, and zero food waste programs. Good for your belly, good for earth.</div></div>
+    <div class="value-card"><div class="value-emoji">🔒</div><div class="value-title">Trust & Safety</div><div class="value-desc">Every rider is background-verified. Every restaurant is hygiene-audited. Your safety isn't optional.</div></div>
+    <div class="value-card"><div class="value-emoji">💡</div><div class="value-title">Constant Innovation</div><div class="value-desc">We never stop improving. Live tracking, AI recommendations, smart delivery routing — always evolving.</div></div>
+    <div class="value-card"><div class="value-emoji">❤️</div><div class="value-title">Community</div><div class="value-desc">We donate 1% of every order to local food banks. Because everyone deserves a full plate.</div></div>
+  </div>
+</section>
+
+<!-- TEAM -->
+<section class="team-section">
+  <div class="section-title">Meet the Team</div>
+  <div class="team-grid">
+    <div class="team-card"><div class="team-avatar">👨‍💼</div><div class="team-name">Arjun Mehta</div><div class="team-role">CEO & Co-founder</div></div>
+    <div class="team-card"><div class="team-avatar">👩‍💻</div><div class="team-name">Priya Nair</div><div class="team-role">CTO & Co-founder</div></div>
+    <div class="team-card"><div class="team-avatar">👨‍🎨</div><div class="team-name">Rohan Das</div><div class="team-role">Head of Design</div></div>
+    <div class="team-card"><div class="team-avatar">👩‍🍳</div><div class="team-name">Sneha Iyer</div><div class="team-role">Head of Partnerships</div></div>
+  </div>
+</section>
+
+<!-- TIMELINE -->
+<section class="timeline-section">
+  <div class="timeline-inner">
+    <div class="section-title">Our Journey</div>
+    <div class="timeline">
+      <div class="tl-item"><div class="tl-dot"></div><div class="tl-year">2021</div><div class="tl-event">GRUB is Born</div><div class="tl-desc">Founded in Bangalore with 5 restaurants and 3 riders. First order delivered in 22 minutes.</div></div>
+      <div class="tl-item"><div class="tl-dot"></div><div class="tl-year">2022</div><div class="tl-event">Series A — ₹50 Crore Raised</div><div class="tl-desc">Expanded to Mumbai, Delhi, Hyderabad. Crossed 10,000 daily orders milestone.</div></div>
+      <div class="tl-item"><div class="tl-dot"></div><div class="tl-year">2023</div><div class="tl-event">Live Tracking Launched</div><div class="tl-desc">Real-time GPS tracking for all orders. Customer satisfaction scores hit all-time high of 4.9/5.</div></div>
+      <div class="tl-item"><div class="tl-dot"></div><div class="tl-year">2024</div><div class="tl-event">200+ Cities, 50K+ Daily Orders</div><div class="tl-desc">Launched GRUB Pro subscription, EV rider fleet, and carbon-neutral packaging initiative.</div></div>
+      <div class="tl-item"><div class="tl-dot"></div><div class="tl-year">2025</div><div class="tl-event">The Future is Delicious</div><div class="tl-desc">AI-powered menu recommendations, 15-minute delivery zones, and international expansion planned.</div></div>
+    </div>
+  </div>
+</section>
+
+</main>
+<footer>
+  <div class="footer-logo">GRUB<span>.</span></div>
+  <div class="footer-links">
+    <a class="footer-link" href="index.html">Home</a>
+    <a class="footer-link" href="contact.html">Contact</a>
+    <a class="footer-link" href="menu.html">Menu</a>
+  </div>
+  <div class="footer-copy">© 2025 GRUB Inc. All rights reserved.</div>
+</footer>
+</div>
+<script src="app.js"></script>
+<script>injectNav('about.html');</script>
+</body>
+</html>

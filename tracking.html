@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Track Order — GRUB</title>
+<link rel="stylesheet" href="style.css">
+<style>
+.tracking-page {
+  padding: calc(var(--nav-h) + 48px) 48px 80px;
+  max-width: 1000px; margin: 0 auto;
+}
+.tracking-title { font-family: var(--font-head); font-size: 48px; font-weight: 800; letter-spacing: -2px; margin-bottom: 8px; }
+.tracking-sub { color: var(--muted2); font-size: 15px; margin-bottom: 40px; }
+
+/* Order selector */
+.order-selector { display: flex; gap: 10px; margin-bottom: 32px; flex-wrap: wrap; }
+.order-chip {
+  padding: 10px 20px; border-radius: 999px;
+  border: 1px solid var(--border); background: var(--surface);
+  font-family: var(--font-head); font-size: 12px; font-weight: 700;
+  cursor: pointer; transition: all var(--transition);
+}
+.order-chip.active, .order-chip:hover { border-color: var(--accent); color: var(--accent); background: rgba(255,69,0,0.08); }
+
+/* Live tracking card */
+.tracking-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 20px; overflow: hidden; margin-bottom: 24px;
+  animation: fadeUp 0.4s ease both;
+}
+.tracking-header {
+  padding: 24px 28px; background: var(--surface2);
+  border-bottom: 1px solid var(--border);
+  display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;
+}
+.order-num { font-family: var(--font-head); font-size: 13px; color: var(--muted2); font-weight: 700; letter-spacing: 1px; text-transform: uppercase; }
+.order-id { font-family: var(--font-head); font-size: 22px; font-weight: 800; }
+.order-time { font-size: 13px; color: var(--muted2); }
+
+/* ETA chip */
+.eta-chip {
+  background: rgba(255,170,0,0.12); border: 1px solid rgba(255,170,0,0.3);
+  border-radius: 12px; padding: 10px 18px; text-align: center;
+}
+.eta-num { font-family: var(--font-head); font-size: 28px; font-weight: 800; color: var(--accent2); }
+.eta-label { font-size: 11px; color: var(--muted2); font-weight: 600; text-transform: uppercase; letter-spacing: 0.8px; }
+
+/* Progress steps */
+.progress-section { padding: 32px 28px; }
+.progress-title { font-family: var(--font-head); font-size: 15px; font-weight: 700; color: var(--muted2); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 28px; }
+.progress-steps { display: flex; align-items: flex-start; justify-content: space-between; position: relative; }
+.progress-steps::before {
+  content: ''; position: absolute; top: 22px; left: 0; right: 0; height: 3px;
+  background: var(--border); z-index: 0;
+}
+.progress-fill {
+  position: absolute; top: 22px; left: 0; height: 3px;
+  background: linear-gradient(90deg, var(--accent), var(--accent2));
+  z-index: 1; transition: width 1.2s cubic-bezier(0.4,0,0.2,1);
+}
+
+.prog-step { display: flex; flex-direction: column; align-items: center; gap: 10px; z-index: 2; }
+.prog-dot {
+  width: 44px; height: 44px; border-radius: 50%;
+  background: var(--surface2); border: 3px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px; transition: all 0.5s cubic-bezier(0.34,1.56,0.64,1);
+}
+.prog-dot.done { background: var(--success); border-color: var(--success); transform: scale(1.1); }
+.prog-dot.active {
+  background: var(--surface); border-color: var(--accent);
+  box-shadow: 0 0 0 6px var(--accent-glow);
+  animation: dotPulse 1.5s ease-in-out infinite;
+}
+@keyframes dotPulse {
+  0%,100%{box-shadow:0 0 0 6px var(--accent-glow)}
+  50%{box-shadow:0 0 0 12px rgba(255,69,0,0.08)}
+}
+.prog-label { font-family: var(--font-head); font-size: 11px; font-weight: 700; text-align: center; text-transform: uppercase; letter-spacing: 0.8px; color: var(--muted2); max-width: 72px; }
+.prog-label.active { color: var(--accent); }
+.prog-label.done { color: var(--success); }
+
+/* Rider card */
+.rider-card {
+  margin: 0 28px 28px;
+  background: var(--surface2); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 18px 20px;
+  display: flex; align-items: center; gap: 16px;
+}
+.rider-avatar { width: 48px; height: 48px; border-radius: 50%; background: rgba(255,69,0,0.15); border: 2px solid rgba(255,69,0,0.35); display: flex; align-items: center; justify-content: center; font-size: 24px; flex-shrink: 0; }
+.rider-name { font-family: var(--font-head); font-size: 15px; font-weight: 700; }
+.rider-info { font-size: 12px; color: var(--muted2); margin-top: 2px; }
+.rider-call { margin-left: auto; }
+
+/* Items summary */
+.items-summary {
+  margin: 0 28px 28px; padding: 18px 20px;
+  background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius);
+}
+.items-sum-title { font-family: var(--font-head); font-size: 13px; font-weight: 700; color: var(--muted2); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; }
+.items-sum-list { display: flex; flex-direction: column; gap: 8px; }
+.item-row { display: flex; justify-content: space-between; align-items: center; font-size: 14px; }
+.item-row-left { display: flex; align-items: center; gap: 10px; }
+
+/* Orders history */
+.history-section { margin-top: 16px; }
+.history-title { font-family: var(--font-head); font-size: 22px; font-weight: 800; margin-bottom: 18px; }
+.history-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 20px 24px;
+  margin-bottom: 12px; display: flex; align-items: center; gap: 20px;
+  cursor: pointer; transition: all var(--transition);
+}
+.history-card:hover { border-color: rgba(255,69,0,0.3); }
+.history-id { font-family: var(--font-head); font-size: 15px; font-weight: 800; }
+.history-meta { font-size: 12px; color: var(--muted2); margin-top: 3px; }
+.history-total { font-family: var(--font-head); font-size: 18px; font-weight: 800; color: var(--accent); margin-left: auto; }
+.history-status { margin-left: 16px; }
+
+@media(max-width:900px){
+  .tracking-page { padding: calc(var(--nav-h) + 20px) 20px 60px; }
+  .progress-steps { gap: 4px; }
+  .prog-label { font-size: 10px; max-width: 56px; }
+  .rider-card,.items-summary { margin: 0 16px 20px; }
+  .progress-section { padding: 24px 16px; }
+}
+</style>
+</head>
+<body>
+<div class="page-enter">
+<main>
+<div class="tracking-page">
+  <div class="tracking-title">Track Order</div>
+  <div class="tracking-sub">Live updates on your delivery status</div>
+
+  <div id="main-content"></div>
+</div>
+</main>
+<footer>
+  <div class="footer-logo">GRUB<span>.</span></div>
+  <div class="footer-copy">© 2025 GRUB Inc.</div>
+</footer>
+</div>
+
+<script src="app.js"></script>
+<script>
+injectNav('tracking.html');
+
+const STATUSES = ['placed','preparing','ready','on_the_way','delivered'];
+const STATUS_LABELS = { placed:'Order Placed', preparing:'Preparing', ready:'Ready', on_the_way:'On the Way', delivered:'Delivered' };
+const STATUS_EMOJIS = { placed:'📋', preparing:'👨‍🍳', ready:'📦', on_the_way:'🚴', delivered:'✅' };
+const RIDERS = [
+  { name:'Ramesh K.', rating:'4.9 ⭐', vehicle:'Electric Bike • KA-05-9834', emoji:'🧑' },
+  { name:'Suresh P.', rating:'4.8 ⭐', vehicle:'Scooter • MH-02-3344', emoji:'👨' },
+  { name:'Anil M.',   rating:'4.7 ⭐', vehicle:'Bicycle • DL-01-5567', emoji:'🧔' },
+];
+
+function getStatusIndex(status){ return STATUSES.indexOf(status); }
+
+function simulateStatus(order){
+  // For demo: advance status each time you visit
+  const idx = getStatusIndex(order.status);
+  if (idx < STATUSES.length - 1){
+    order.status = STATUSES[idx + 1];
+    const orders = Orders.get();
+    const o = orders.find(o=>o.id===order.id);
+    if (o){ o.status = order.status; LS.set('orders', orders); }
+  }
+  return order;
+}
+
+function renderTracking(order){
+  const statusIdx = getStatusIndex(order.status);
+  const fillPct = (statusIdx / (STATUSES.length-1)) * 100;
+  const eta = order.status==='delivered' ? 0 : Math.max(3, order.estimatedMin - statusIdx*6);
+  const rider = RIDERS[parseInt(order.id.slice(-1),36) % RIDERS.length];
+
+  return `
+    <div class="tracking-card">
+      <div class="tracking-header">
+        <div>
+          <div class="order-num">Order ID</div>
+          <div class="order-id">#${order.id}</div>
+          <div class="order-time">${fmt.date(order.createdAt)} · ${fmt.time(order.createdAt)}</div>
+        </div>
+        ${order.status!=='delivered' ? `
+        <div class="eta-chip">
+          <div class="eta-num">${eta} min</div>
+          <div class="eta-label">Estimated Arrival</div>
+        </div>` : `<div class="badge badge-success" style="font-size:14px;padding:10px 18px">✅ Delivered</div>`}
+      </div>
+
+      <div class="progress-section">
+        <div class="progress-title">Order Progress</div>
+        <div class="progress-steps" style="position:relative">
+          <div class="progress-fill" style="width:${fillPct}%"></div>
+          ${STATUSES.map((s,i)=>`
+            <div class="prog-step">
+              <div class="prog-dot ${i<statusIdx?'done':i===statusIdx?'active':''}">${STATUS_EMOJIS[s]}</div>
+              <div class="prog-label ${i<statusIdx?'done':i===statusIdx?'active':''}">${STATUS_LABELS[s]}</div>
+            </div>`).join('')}
+        </div>
+      </div>
+
+      ${order.status !== 'placed' ? `
+      <div class="rider-card">
+        <div class="rider-avatar">${rider.emoji}</div>
+        <div>
+          <div class="rider-name">${rider.name}</div>
+          <div class="rider-info">${rider.rating} · ${rider.vehicle}</div>
+        </div>
+        <div class="rider-call">
+          <button class="btn btn-outline btn-sm" onclick="toast('Calling ${rider.name}…', 'info')">📞 Call</button>
+        </div>
+      </div>` : ''}
+
+      <div class="items-summary">
+        <div class="items-sum-title">Items ordered</div>
+        <div class="items-sum-list">
+          ${order.items.map(i=>`
+            <div class="item-row">
+              <div class="item-row-left"><span style="font-size:20px">${i.emoji}</span><span>${i.name} ×${i.qty}</span></div>
+              <span style="font-family:var(--font-head);font-weight:700">${fmt.price(i.price*i.qty)}</span>
+            </div>`).join('')}
+        </div>
+        <div class="divider"></div>
+        <div class="item-row"><span style="font-weight:600">Total Paid</span><span style="font-family:var(--font-head);font-size:18px;font-weight:800;color:var(--accent)">${fmt.price(order.total)}</span></div>
+      </div>
+    </div>
+
+    ${order.status!=='delivered' ? `
+    <button class="btn btn-ghost btn-sm" onclick="advanceOrder('${order.id}')">
+      🔄 Simulate Next Status (demo)
+    </button>` : ''}
+  `;
+}
+
+function advanceOrder(id){
+  const orders = Orders.get();
+  const o = orders.find(o=>o.id===id);
+  if (!o) return;
+  const idx = getStatusIndex(o.status);
+  if (idx < STATUSES.length-1){ o.status = STATUSES[idx+1]; LS.set('orders', orders); renderPage(); }
+  else { toast('Order already delivered!', 'info'); }
+}
+
+function renderPage(){
+  const orders = Orders.get();
+  const content = document.getElementById('main-content');
+
+  if (!orders.length){
+    content.innerHTML=`
+      <div class="empty-state">
+        <div class="empty-icon">📦</div>
+        <div class="empty-title">No orders yet</div>
+        <div class="empty-desc">Place your first order and track it live right here!</div>
+        <a class="btn btn-primary" href="menu.html">Order Now</a>
+      </div>`;
+    return;
+  }
+
+  const latest = orders[0];
+  let html = renderTracking(latest);
+
+  if (orders.length > 1){
+    html += `<div class="history-section"><div class="history-title">Order History</div>`;
+    orders.slice(1).forEach(o=>{
+      html += `
+        <div class="history-card">
+          <div>
+            <div class="history-id">#${o.id}</div>
+            <div class="history-meta">${fmt.date(o.createdAt)} · ${o.items.length} item${o.items.length>1?'s':''}</div>
+          </div>
+          <div class="history-status"><span class="badge ${o.status==='delivered'?'badge-success':'badge-warning'}">${STATUS_LABELS[o.status]||o.status}</span></div>
+          <div class="history-total">${fmt.price(o.total)}</div>
+        </div>`;
+    });
+    html += '</div>';
+  }
+
+  content.innerHTML = html;
+}
+
+renderPage();
+</script>
+</body>
+</html>

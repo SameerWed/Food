@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Menu — GRUB</title>
+<link rel="stylesheet" href="style.css">
+<style>
+.menu-hero {
+  padding: calc(var(--nav-h) + 48px) 48px 40px;
+  max-width: 1180px; margin: 0 auto;
+  display: flex; justify-content: space-between; align-items: flex-end;
+  flex-wrap: wrap; gap: 16px;
+}
+.menu-hero-title { font-family: var(--font-head); font-size: 52px; font-weight: 800; letter-spacing: -2px; }
+.menu-hero-sub { color: var(--muted2); font-size: 16px; margin-top: 6px; }
+
+.search-bar {
+  display: flex; align-items: center; gap: 10px;
+  background: var(--surface2); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 10px 18px;
+  min-width: 280px; transition: all var(--transition);
+}
+.search-bar:focus-within { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-glow); }
+.search-bar input {
+  background: none; border: none; outline: none;
+  color: var(--text); font-size: 14px; font-family: var(--font-body);
+  flex: 1;
+}
+.search-bar input::placeholder { color: var(--muted); }
+
+.filter-bar {
+  padding: 0 48px 28px; max-width: 1180px; margin: 0 auto;
+  display: flex; gap: 10px; flex-wrap: wrap;
+}
+.cat-pill {
+  padding: 9px 20px; border-radius: 999px;
+  border: 1px solid var(--border); background: var(--surface);
+  font-family: var(--font-head); font-size: 12px; font-weight: 700;
+  cursor: pointer; transition: all var(--transition);
+  display: flex; align-items: center; gap: 7px; letter-spacing: 0.5px;
+}
+.cat-pill:hover { border-color: rgba(255,69,0,0.4); color: var(--accent); }
+.cat-pill.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+.sort-bar {
+  padding: 0 48px 24px; max-width: 1180px; margin: 0 auto;
+  display: flex; align-items: center; gap: 12px;
+}
+.sort-label { font-family: var(--font-head); font-size: 12px; color: var(--muted2); font-weight: 700; letter-spacing: 0.8px; text-transform: uppercase; }
+.sort-btn {
+  padding: 6px 14px; border-radius: var(--radius-sm);
+  border: 1px solid var(--border); background: var(--surface);
+  font-family: var(--font-head); font-size: 11px; font-weight: 700;
+  cursor: pointer; transition: all var(--transition); color: var(--muted2);
+}
+.sort-btn:hover, .sort-btn.active { border-color: var(--accent); color: var(--accent); background: rgba(255,69,0,0.08); }
+
+.results-info {
+  padding: 0 48px 20px; max-width: 1180px; margin: 0 auto;
+  font-size: 13px; color: var(--muted2);
+}
+.results-info strong { color: var(--text); font-family: var(--font-head); }
+
+.menu-grid-wrap { padding: 0 48px 80px; max-width: 1180px; margin: 0 auto; }
+
+/* food card styles */
+.food-img-wrap {
+  background: var(--surface2); padding: 28px 20px; text-align: center;
+  position: relative; font-size: 72px; line-height: 1;
+}
+.food-badge {
+  position: absolute; top: 10px; left: 10px;
+  background: var(--accent); color: #fff;
+  border-radius: var(--radius-sm); padding: 4px 10px;
+  font-family: var(--font-head); font-size: 10px; font-weight: 800;
+}
+.food-card { cursor: pointer; }
+.food-name { font-family: var(--font-head); font-size: 15px; font-weight: 700; margin-bottom: 5px; }
+.food-desc { font-size: 12px; color: var(--muted2); line-height: 1.5; margin-bottom: 14px; }
+.food-footer { display: flex; justify-content: space-between; align-items: center; }
+.food-price { font-family: var(--font-head); font-size: 20px; font-weight: 800; color: var(--accent); }
+.food-rating { font-size: 12px; color: var(--accent2); font-weight: 600; }
+.add-btn {
+  width: 36px; height: 36px; border-radius: 10px;
+  background: var(--accent); border: none; color: #fff;
+  font-size: 22px; cursor: pointer; transition: all var(--transition);
+  display: flex; align-items: center; justify-content: center;
+}
+.add-btn:hover { background: #ff6030; transform: scale(1.12); box-shadow: 0 4px 14px var(--accent-glow); }
+
+@media(max-width:900px){
+  .menu-hero,.filter-bar,.sort-bar,.results-info,.menu-grid-wrap { padding-left:20px; padding-right:20px; }
+  .menu-hero-title { font-size: 36px; }
+}
+</style>
+</head>
+<body>
+<div class="page-enter">
+
+<main>
+<div class="menu-hero">
+  <div>
+    <div class="menu-hero-title">Our Menu</div>
+    <div class="menu-hero-sub">Handcrafted dishes, made fresh daily</div>
+  </div>
+  <div class="search-bar">
+    <span>🔍</span>
+    <input type="text" id="search-input" placeholder="Search dishes…">
+  </div>
+</div>
+
+<div class="filter-bar" id="filter-bar"></div>
+
+<div class="sort-bar">
+  <span class="sort-label">Sort by:</span>
+  <button class="sort-btn active" data-sort="popular">Popular</button>
+  <button class="sort-btn" data-sort="price-asc">Price ↑</button>
+  <button class="sort-btn" data-sort="price-desc">Price ↓</button>
+  <button class="sort-btn" data-sort="rating">Rating</button>
+</div>
+
+<div class="results-info"><strong id="result-count">12</strong> items found</div>
+
+<div class="menu-grid-wrap">
+  <div class="grid-auto" id="menu-grid"></div>
+</div>
+</main>
+
+<footer>
+  <div class="footer-logo">GRUB<span>.</span></div>
+  <div class="footer-links">
+    <a class="footer-link" href="about.html">About</a>
+    <a class="footer-link" href="contact.html">Contact</a>
+    <a class="footer-link" href="tracking.html">Track Order</a>
+  </div>
+  <div class="footer-copy">© 2025 GRUB Inc.</div>
+</footer>
+</div>
+
+<script src="app.js"></script>
+<script>
+injectNav('menu.html');
+
+let activeCat = 'all', activeSort = 'popular', searchQ = '';
+
+// Read URL param
+const urlCat = new URLSearchParams(location.search).get('cat');
+if (urlCat) activeCat = urlCat;
+
+// Build filter pills
+const filterBar = document.getElementById('filter-bar');
+CATEGORIES.forEach(c=>{
+  const el = document.createElement('button');
+  el.className = 'cat-pill' + (c.id===activeCat?' active':'');
+  el.innerHTML = `${c.emoji} ${c.label}`;
+  el.onclick = ()=>{ activeCat=c.id; document.querySelectorAll('.cat-pill').forEach(p=>p.classList.remove('active')); el.classList.add('active'); render(); };
+  filterBar.appendChild(el);
+});
+
+// Sort buttons
+document.querySelectorAll('.sort-btn').forEach(b=>{
+  b.onclick=()=>{ activeSort=b.dataset.sort; document.querySelectorAll('.sort-btn').forEach(s=>s.classList.remove('active')); b.classList.add('active'); render(); };
+});
+
+// Search
+document.getElementById('search-input').addEventListener('input', e=>{ searchQ=e.target.value.toLowerCase(); render(); });
+
+function getFiltered(){
+  let items = activeCat==='all' ? MENU : MENU.filter(m=>m.cat===activeCat);
+  if (searchQ) items = items.filter(m=> m.name.toLowerCase().includes(searchQ) || m.desc.toLowerCase().includes(searchQ));
+  if (activeSort==='price-asc')  items = [...items].sort((a,b)=>a.price-b.price);
+  if (activeSort==='price-desc') items = [...items].sort((a,b)=>b.price-a.price);
+  if (activeSort==='rating')     items = [...items].sort((a,b)=>b.rating-a.rating);
+  return items;
+}
+
+function render(){
+  const items = getFiltered();
+  const grid = document.getElementById('menu-grid');
+  grid.innerHTML='';
+  document.getElementById('result-count').textContent = items.length;
+  if (!items.length){
+    grid.innerHTML=`<div class="empty-state"><div class="empty-icon">🍽️</div><div class="empty-title">Nothing found</div><div class="empty-desc">Try a different category or search term.</div></div>`;
+    return;
+  }
+  items.forEach(item=> grid.appendChild(buildFoodCard(item)));
+}
+
+render();
+</script>
+</body>
+</html>
