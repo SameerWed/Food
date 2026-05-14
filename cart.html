@@ -22,7 +22,21 @@
   transition: border-color var(--transition);
 }
 .cart-item:hover { border-color: rgba(255,69,0,0.25); }
-.cart-item-emoji { font-size: 48px; flex-shrink: 0; }
+.cart-item-img{
+  width:90px;
+  height:90px;
+  object-fit:cover;
+  border-radius:18px;
+  flex-shrink:0;
+  border:1px solid var(--border);
+}
+  .upsell-img{
+  width:60px;
+  height:60px;
+  object-fit:cover;
+  border-radius:14px;
+  border:1px solid var(--border);
+}
 .cart-item-info { flex: 1; }
 .cart-item-name { font-family: var(--font-head); font-size: 16px; font-weight: 700; margin-bottom: 4px; }
 .cart-item-desc { font-size: 12px; color: var(--muted2); }
@@ -163,7 +177,7 @@ function render(){
       const el = document.createElement('div');
       el.className = 'cart-item';
       el.innerHTML = `
-        <div class="cart-item-emoji">${item.emoji}</div>
+        <img src="${item.image}" alt="${item.name}" class="cart-item-img">
         <div class="cart-item-info">
           <div class="cart-item-name">${item.name}</div>
           <div class="cart-item-desc">${item.desc}</div>
@@ -235,7 +249,7 @@ function buildUpsell(){
     const el = document.createElement('div');
     el.className='upsell-card';
     el.innerHTML=`
-      <div class="upsell-emoji">${item.emoji}</div>
+      <img src="${item.image}" class="upsell-img">
       <div><div class="upsell-name">${item.name}</div><div class="upsell-price">${fmt.price(item.price)}</div></div>
       <button class="upsell-add" onclick="addToCart(${item.id});render()">+</button>`;
     grid.appendChild(el);
